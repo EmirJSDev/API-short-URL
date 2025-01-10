@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  url_shortener:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+    environment:
+      - NODE_ENV=production
+    networks:
+      - url_shortener_net
+
+networks:
+  url_shortener_net:
+    driver: bridge

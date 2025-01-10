@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f7fc;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-size: 16px;
+            margin: 10px 0 5px;
+        }
+        input, button {
+            padding: 12px;
+            margin: 10px 0;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        button {
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        .result a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .result a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Сокращение URL</h1>
+    <input type="text" id="originalUrl" placeholder="Введите оригинальный URL" />
+
+    <label for="alias">Алиас (необязательно):</label>
+    <input type="text" id="alias" placeholder="Введите алиас для короткой ссылки (необязательно)" maxlength="20"/>
+
+    <label for="expiresAt">Срок действия (необязательно):</label>
+    <input type="datetime-local" id="expiresAt" />
+
+    <button onclick="createShortUrl()">Сократить ссылку</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+    async function createShortUrl() {
+        const originalUrl = document.getElementById('originalUrl').value;
+        const alias = document.getElementById('alias').value;
+        const expiresAt = document.getElementById('expiresAt').value;
+        const resultDiv = document.getElementById('result');
+
+        if (!originalUrl) {
+            resultDiv.textContent = 'Пожалуйста, введите URL.';
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3002/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ originalUrl, alias, expiresAt })
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка при создании короткой ссылки');
+            }
+
+            const data = await response.json();
+            resultDiv.innerHTML = `Короткая ссылка: <a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>`;
+        } catch (error) {
+            resultDiv.textContent = 'Произошла ошибка: ' + error.message;
+        }
+    }
+</script>
+
+</body>
+</html>
