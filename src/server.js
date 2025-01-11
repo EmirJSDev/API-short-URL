@@ -6,10 +6,10 @@ const urlRoutes = require('./routes/urlRoutes');
 const app = express();
 const port = process.env.PORT || 3002;
 
-// Добавляем middleware для обработки JSON
-app.use(bodyParser.json());  // Это решает проблему с POST запросами
 
-// Убедитесь, что путь правильный
+app.use(bodyParser.json());
+
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Подключаем маршруты для сокращения URL
